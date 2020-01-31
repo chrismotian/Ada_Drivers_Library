@@ -22,13 +22,25 @@ procedure Main is
 
    dialValue : Analog_Value;
    dialValueColor : Analog_Value;
-   --to compare if Thief won or lost
+   
+   -- used to compare red,blue and green
+   -- red = 0
+   -- green = 1
+   -- blue = 2
+   -- the first variable is to save during the gametime and will be used to assign to the index
+   Dial_Color : Integer;
    Dial_Color_First : Integer;
    Dial_Color_Second : Integer;
    Dial_Color_Third : Integer;
    Dial_Color_Fourth : Integer;
 
    LED_Index : Natural := 4;
+   
+   All_White_Color_Values : constant LED_Values := (LED_Green => 255,LED_Red => 255,LED_Blue=>255,LED_White=>255);
+   All_Green_Color_Values : constant LED_Values := (LED_Green => 255,LED_Red => 0,LED_Blue=>0,LED_White=>255);
+   All_Red_Color_Values : constant LED_Values := (LED_Green => 0,LED_Red => 255,LED_Blue=>0,LED_White=>255);
+   All_Blue_Color_Values : constant LED_Values := (LED_Green => 0,LED_Red => 0,LED_Blue=>255,LED_White=>255);
+   Color_Values : LED_Values := (LED_Green => 255,LED_Red => 255,LED_Blue=>255,LED_White=>255);
 
    t : Analog_Value := 100;
 
@@ -70,36 +82,35 @@ begin
       countTimeUInt64 := UInt64(countTime);
    -- the player has 5 seconds to choose a color for a LED
       while countTimeUInt64+bootTime > UInt64(Clock) loop
-
+      
       -- after reading the potentiometer...
          dialValue := Analog(1);
       -- the input needs to be adjusted because the coditional statement is made from red to red but I want red to purple
          dialValueColor := dialValue*5/6;
 
-         if dialValueColor < 341 then
-            dialValueColor := (dialValueColor*3)/4;
-            Color_Values := (LED_Green => UInt8(dialValueColor),LED_Red => 255 - UInt8(dialValueColor),LED_Blue=>0,LED_White=>100);
-         elsif dialValueColor < 682 then
-            dialValueColor := ((dialValueColor-341)*3)/4;
-            Color_Values := (LED_Blue => UInt8(dialValueColor),LED_Green => 255 - UInt8(dialValueColor),LED_Red=>0,LED_White=>100);
+         if dialValue < 160 then
+            Dial_Color := 0;
+            Set_Color (Strip, LED_Index, All_Red_Color_Values);
+         elsif dialValue < 530 then
+            Dial_Color := 1;
+            Set_Color (Strip, LED_Index, All_Green_Color_Values);
          else
-            dialValueColor := ((dialValueColor-683)*3)/4;
-            Color_Values := (LED_Red => UInt8(dialValueColor),LED_Blue => 255 - UInt8(dialValueColor),LED_Green=>0,LED_White=>100);
-         end if;
+            Dial_Color := 2;
+            Set_Color (Strip, LED_Index, All_Blue_Color_Values);
 
-         Set_Color (Strip, LED_Index, Color_Values);
+         end if;
          Show (Strip, Kitronik_Write'Access);
 
       end loop;
 
       if I = 1 then
-         Dial_Color_First := Integer(dialValueColor);
+         Dial_Color_First := Dial_Color;
       elsif I = 2 then
-         Dial_Color_Second := Integer(dialValueColor);
+         Dial_Color_Second := Dial_Color;
       elsif I = 3 then
-         Dial_Color_Third := Integer(dialValueColor);
+         Dial_Color_Third := Dial_Color;
       else
-         Dial_Color_Fourth := Integer(dialValueColor);
+         Dial_Color_Fourth := Dial_Color;
       end if;
 
    end loop;
