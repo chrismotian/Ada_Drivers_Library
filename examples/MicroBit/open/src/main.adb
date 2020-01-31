@@ -15,14 +15,14 @@ procedure Main is
    -- this is necessary to make the variable above comparable;
    countTimeUInt64 : UInt64;
    -- this is necessary to make the counter and current time/Clock unequal at start
-   bootTime : constant UInt64 := 5000;
+   bootTime : constant UInt64 := 10000;
 
    -- LED can be controlled with all colors
    Strip : LED_Strip := Create (Mode => GRB, Count => 18);
 
    dialValue : Analog_Value;
    dialValueColor : Analog_Value;
-   
+
    -- used to compare red,blue and green
    -- red = 0
    -- green = 1
@@ -35,7 +35,7 @@ procedure Main is
    Dial_Color_Fourth : Integer;
 
    LED_Index : Natural := 4;
-   
+
    All_White_Color_Values : constant LED_Values := (LED_Green => 255,LED_Red => 255,LED_Blue=>255,LED_White=>255);
    All_Green_Color_Values : constant LED_Values := (LED_Green => 255,LED_Red => 0,LED_Blue=>0,LED_White=>255);
    All_Red_Color_Values : constant LED_Values := (LED_Green => 0,LED_Red => 255,LED_Blue=>0,LED_White=>255);
@@ -43,12 +43,14 @@ procedure Main is
    Color_Values : LED_Values := (LED_Green => 255,LED_Red => 255,LED_Blue=>255,LED_White=>255);
 
    t : Analog_Value := 100;
-
 begin
-   -- close the Lock
+      Go(0,50);
+     Delay_Ms(1000);
+   Go(0,100);
+     Delay_Ms(1000);
    Go(0,50);
-   Delay_Ms(1000);
-   Stop(0);
+     Delay_Ms(1000);
+     Stop(0);
 
    for I in  1..4 loop
       -- color can be changued for each LED individually
@@ -81,8 +83,8 @@ begin
       countTime := Clock;
       countTimeUInt64 := UInt64(countTime);
    -- the player has 5 seconds to choose a color for a LED
-      while countTimeUInt64+bootTime > UInt64(Clock) loop
-      
+      while countTimeUInt64+bootTime > UInt64(Clock)loop
+
       -- after reading the potentiometer...
          dialValue := Analog(1);
       -- the input needs to be adjusted because the coditional statement is made from red to red but I want red to purple
@@ -103,36 +105,83 @@ begin
 
       end loop;
 
+
       if I = 1 then
          Dial_Color_First := Dial_Color;
+              Go(0,40);
+     Delay_Ms(1000);
+     Stop(0);
       elsif I = 2 then
          Dial_Color_Second := Dial_Color;
+              Go(0,30);
+     Delay_Ms(1000);
+     Stop(0);
       elsif I = 3 then
          Dial_Color_Third := Dial_Color;
+              Go(0,20);
+     Delay_Ms(1000);
+     Stop(0);
       else
          Dial_Color_Fourth := Dial_Color;
       end if;
 
-   end loop;
 
-   --  Thief lose
-    if Dial_Color_First = Dial_Color_Second and Dial_Color_First = Dial_Color_Third and Dial_Color_First = Dial_Color_Fourth then
+   end loop;
+   
+     --Thief lost
+      if Dial_Color_First = Dial_Color_Second and Dial_Color_First = Dial_Color_Third and Dial_Color_First = Dial_Color_Fourth then
+         Go(0,100);
+     Delay_Ms(1000);
+      Stop(0);
 
          Go(0,50);
      Delay_Ms(1000);
       Stop(0);
-    --  Thief win
+      --Thief won
    elsif (Dial_Color_First = Dial_Color_Second and Dial_Color_First = Dial_Color_Third) or (Dial_Color_First = Dial_Color_Second and Dial_Color_First = Dial_Color_Fourth) or (Dial_Color_Fourth = Dial_Color_Second and Dial_Color_Fourth = Dial_Color_Third) then
+
+   Go(0,100);
+     Delay_Ms(1000);
+      Stop(0);
 
    Go(0,0);
      Delay_Ms(1000);
       Stop(0);
-   --  Thief lose
+
+         Go(0,20);
+     Delay_Ms(300);
+     Stop(0);
+
+         Go(0,0);
+     Delay_Ms(300);
+     Stop(0);
+
+         Go(0,20);
+     Delay_Ms(300);
+     Stop(0);
+
+         Go(0,0);
+     Delay_Ms(300);
+      Stop(0);
+
+         Go(0,100);
+     Delay_Ms(1000);
+      Stop(0);
+
+   Go(0,0);
+     Delay_Ms(1000);
+      Stop(0);
+   --Thief lost
    else
+         Go(0,100);
+     Delay_Ms(1000);
+      Stop(0);
 
          Go(0,50);
      Delay_Ms(1000);
       Stop(0);
+   end if;
+   
    end if;
    --  the program restarts if the program ends and therefore we include an empty infinite loop after the game is over
    loop
